@@ -23,3 +23,24 @@ def crear_evento(service, nombre, fecha, ubicacion=None, descripcion=None):
     except HttpError as error:
         print(f'Ocurrió un error al crear el evento: {error}')
 
+
+def actualizar_evento(service, nombre, fecha, ubicacion=None, descripcion=None):
+    evento = {
+        'summary': nombre,
+        'location': ubicacion,
+        'description': descripcion,
+        'start': {
+            'dateTime': fecha.isoformat(),
+            'timeZone': timezone('America/Mexico_City').zone,
+        },
+        'end': {
+            'dateTime': (fecha + timedelta(hours=1)).isoformat(),
+            'timeZone': timezone('America/Mexico_City').zone,
+        },
+    }
+
+    try:
+        evento_actualizado = service.events().update(calendarId='primary', eventId=evento_id, body=evento).execute()
+        print(f'Evento actualizado: {evento_actualizado.get("htmlLink")}')
+    except HttpError as error:
+        print(f'Ocurrió un error al actualizar el evento: {error}')
